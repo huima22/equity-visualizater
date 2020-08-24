@@ -1,7 +1,7 @@
 from yahooquery import Ticker
 import matplotlib.pyplot as plt
 import pandas as pd
-
+import pandas_datareader.data as data
 def getFinancialData(ticker,types):
 	data = Ticker(ticker).get_financial_data(types, trailing=False)
 	if data is not None:
@@ -43,12 +43,16 @@ def getLiabilityAnalysis(ticker):
 #def getRatioAnalysis(ticker):
 
 def main():
-	getIncomeAnalysis('FB')
-	getExpenseAnalysis('FB')
+	#getIncomeAnalysis(tiker)
+	#getExpenseAnalysis('FB')
 	#getLiabilityAnalysis('goog')
-	plt.show()
-
+	all_ticker = data.get_nasdaq_symbols(retry_count=3, timeout=30, pause=None)
+	all_ticker = all_ticker.drop(columns=['Nasdaq Traded', 'Listing Exchange',
+										  'Market Category', 'ETF', 'Round Lot Size', 'Test Issue',
+										  'Financial Status', 'CQS Symbol', 'NASDAQ Symbol', 'NextShares'])
+	print(all_ticker.to_dict())
+	#plt.show()
 
 if __name__== "__main__":
- 	 main()
+  main()
 
