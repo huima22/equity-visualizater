@@ -43,15 +43,11 @@ def getLiabilityAnalysis(ticker):
 #def getRatioAnalysis(ticker):
 
 def main():
-	#getIncomeAnalysis(tiker)
-	#getExpenseAnalysis('FB')
-	#getLiabilityAnalysis('goog')
-	all_ticker = data.get_nasdaq_symbols(retry_count=3, timeout=30, pause=None)
-	all_ticker = all_ticker.drop(columns=['Nasdaq Traded', 'Listing Exchange',
-										  'Market Category', 'ETF', 'Round Lot Size', 'Test Issue',
-										  'Financial Status', 'CQS Symbol', 'NASDAQ Symbol', 'NextShares'])
-	print(all_ticker.to_dict())
-	#plt.show()
+	getIncomeAnalysis('aapl')
+	getExpenseAnalysis('aapl')
+	getLiabilityAnalysis('aapl')
+
+	plt.show()
 
 if __name__== "__main__":
   main()
