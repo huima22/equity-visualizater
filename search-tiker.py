@@ -7,11 +7,6 @@ import matplotlib.pyplot as plt
 from scraper import getIncomeAnalysis
 from scraper import getExpenseAnalysis
 from scraper import getLiabilityAnalysis
-import matplotlib
-import matplotlib.pyplot as plt
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
-from matplotlib.figure import Figure
-
 all_ticker = data.get_nasdaq_symbols(retry_count=3, timeout=30, pause=None)
 all_ticker = all_ticker.drop(columns=['Nasdaq Traded', 'Listing Exchange',
                                           'Market Category', 'ETF', 'Round Lot Size', 'Test Issue',
@@ -60,8 +55,6 @@ def getGraphIncomeAnalysis():
     df = getIncomeAnalysis(company_tiker)
     if(df is not None):
         df.plot(kind='line', x='asOfDate', y=['NetIncome', 'TotalRevenue', 'GrossProfit', 'EBIT'])
-        canvas = FigureCanvasTkAgg(fig, master=self.lf)
-        canvas.get_tk_widget().grid(row=1, column=0, padx=5, pady=5)
     else:
         tk.messagebox.showinfo(title='Information', message='Service Not Available')
 
