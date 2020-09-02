@@ -3,7 +3,6 @@ try:
     import tkinter as tk
     from tkinter import ttk
 except ImportError:
-    # Python 2
     import Tkinter as tk
     import ttk
 
@@ -92,10 +91,11 @@ class AutocompleteEntry(tk.Frame, object):
         self._entries = entries
         self._no_results_message = no_results_message
         self._listbox_height = max_entries
+        self.selected_value = ''
 
         self.entry.bind("<KeyRelease>", self._update_autocomplete)
         self.entry.focus()
-        self.entry.grid(column=0, row=0)
+        self.entry.grid(column=0, row=1)
 
         self.listbox.bind("<<ListboxSelect>>", self._select_entry)
         self.listbox.grid(column=0, row=1)
@@ -153,8 +153,7 @@ class AutocompleteEntry(tk.Frame, object):
         """
         widget = event.widget
         value = widget.get(int(widget.curselection()[0]))
-        print(value)
-        # after select remove listbox
+        self.selected_value = value
         self.listbox.grid_forget()
         self.text.set(value)
 

@@ -12,8 +12,13 @@ def getFinancialData(ticker,types):
 def getIncomeAnalysis(ticker):
 	dfGrossProfitEbit = getFinancialData(ticker, ['GrossProfit', 'EBIT'])
 	dfNetIncomeRevenue = getFinancialData(ticker, ['TotalRevenue', 'NetIncome'])
-	df = pd.merge(dfGrossProfitEbit, dfNetIncomeRevenue, 'inner', on='asOfDate')
-	df.plot(kind='line', x='asOfDate', y=['NetIncome', 'TotalRevenue', 'GrossProfit', 'EBIT'])
+	if dfGrossProfitEbit is not None and dfNetIncomeRevenue is not None:
+		df = pd.merge(dfGrossProfitEbit, dfNetIncomeRevenue, 'inner', on='asOfDate')
+		return df
+	else:
+		return None
+	#df.plot(kind='line', x='asOfDate', y=['NetIncome', 'TotalRevenue', 'GrossProfit', 'EBIT'])
+
 
 def getExpenseAnalysis(ticker):
 	dfSGA = getFinancialData(ticker,['SellingGeneralAndAdministration']).drop(['periodType'],axis=1).rename(columns={'SellingGeneralAndAdministration' : 'SG&A'})
@@ -28,17 +33,18 @@ def getExpenseAnalysis(ticker):
 	expenseData = expenseData.drop(['asOfDate'],axis=1)
 	expenseData.set_index('Year', inplace=True)
 	dfTranspose = expenseData.transpose()
-	print(dfTranspose)
+	#print(dfTranspose)
+	return dfTranspose
 	#df2015.plot.pie(y=['SellingGeneralAndAdministration','ResearchAndDevelopment','CostOfRevenue','InterestExpense','OperatingExpense'])
-	dfTranspose.plot.pie(subplots=True,autopct='%.2f',labeldistance=True, legend=False,figsize=(5, 5))
+	#dfTranspose.plot.pie(subplots=True,autopct='%.2f',labeldistance=True, legend=False,figsize=(5, 5))
 
 
 def getLiabilityAnalysis(ticker):
 	dfLiability = getFinancialData(ticker, ['LongTermDebt','CurrentDebt','CurrentDeferredRevenue','DeferredIncomeTax','AccountsPayable']).drop(['periodType'], axis=1)
 	dfLiability['Year'] = pd.DatetimeIndex(dfLiability['asOfDate']).year
 	dfLiability = dfLiability.drop(['asOfDate'], axis=1)
-	dfLiability.plot(kind='bar', x='Year', y=['LongTermDebt', 'CurrentDebt', 'CurrentDeferredRevenue', 'DeferredIncomeTax','AccountsPayable'])
-
+	#dfLiability.plot(kind='bar', x='Year', y=['LongTermDebt', 'CurrentDebt', 'CurrentDeferredRevenue', 'DeferredIncomeTax','AccountsPayable'])
+	return dfLiability
 #def getAssetAnalysis(ticker):
 #def getRatioAnalysis(ticker):
 
