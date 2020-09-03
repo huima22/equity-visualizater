@@ -28,13 +28,13 @@ class Application(tk.Frame, object):
         super(Application, self).__init__(*args, **kwargs)
 
 
-        label = tk.Label(self, text="Search company name ")
+       # label = tk.Label(self, text="Search company name ")
         #label.pack()
-        label.grid(row=1, column=1, rowspan=1, columnspan=2, padx=3, pady=3)
+        #label.grid(row=1, column=1, rowspan=1, columnspan=2, padx=3, pady=3)
 
         self.entry = AutocompleteEntry(self)
         self.build(case_sensitive=False, no_results_message=NO_RESULTS_MESSAGE)
-        self.entry.grid(row=2, column=2, rowspan=1, columnspan=2, padx=3, pady=3)
+        self.entry.grid(row=2, column=2, rowspan=1, columnspan=2, padx=10, pady=3)
         #self.entry.pack(after=label)
         self.nr = tk.StringVar()
 
