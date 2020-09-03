@@ -95,11 +95,13 @@ class AutocompleteEntry(tk.Frame, object):
 
         self.entry.bind("<KeyRelease>", self._update_autocomplete)
         self.entry.focus()
-        self.entry.grid(column=0, row=1)
+        self.entry.grid(column=0, row=0)
+        self.entry['width'] = 50
 
         self.listbox.bind("<<ListboxSelect>>", self._select_entry)
-        self.listbox.grid(column=0, row=1)
+        self.listbox.grid(column=0, row=0)
         self.listbox.grid_forget()
+        self.listbox['width'] = 50
         # Initially, the listbox widget doesn't show up.
 
     def _update_autocomplete(self, event):

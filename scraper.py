@@ -14,6 +14,8 @@ def getIncomeAnalysis(ticker):
 	dfNetIncomeRevenue = getFinancialData(ticker, ['TotalRevenue', 'NetIncome'])
 	if dfGrossProfitEbit is not None and dfNetIncomeRevenue is not None:
 		df = pd.merge(dfGrossProfitEbit, dfNetIncomeRevenue, 'inner', on='asOfDate')
+		df['Year'] = pd.DatetimeIndex(df['asOfDate']).year
+		df = df.drop(['asOfDate'], axis=1)
 		return df
 	else:
 		return None
