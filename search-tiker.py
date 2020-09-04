@@ -11,7 +11,6 @@ import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
-import os
 matplotlib.use("TkAgg")
 
 all_ticker = data.get_nasdaq_symbols(retry_count=3, timeout=30, pause=None)
@@ -25,11 +24,6 @@ code_dic = code_dic.get('Symbol')
 class Application(tk.Frame, object):
     def __init__(self, *args, **kwargs):
         super(Application, self).__init__(*args, **kwargs)
-
-
-       # label = tk.Label(self, text="Search company name ")
-        #label.pack()
-        #label.grid(row=1, column=1, rowspan=1, columnspan=2, padx=3, pady=3)
         self.dataPlot = None
         self.lf = None
         self.entry = AutocompleteEntry(self)
@@ -133,8 +127,6 @@ if __name__ == "__main__":
 
     application = Application(root)
     application.grid(row=1, column=1, columnspan=1)
-   # application.pack()
-
     b1 = tk.Button(root, text='Income Analysis', width=15, height=2, command=application.getGraphIncomeAnalysis)
     b1.grid(row=1, column =5, rowspan=2, sticky = 'nw', pady=5,padx = 5)
     b2 = tk.Button(root, text='Expense Analysis', width=15, height=2, command=application.getGraphExpenseAnalysis)
