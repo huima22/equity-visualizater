@@ -22,7 +22,6 @@ all_ticker = all_ticker.reset_index()
 all_ticker = all_ticker.set_index('Security Name')
 code_dic = all_ticker.to_dict()
 code_dic = code_dic.get('Symbol')
-print(code_dic.keys())
 class Application(tk.Frame, object):
     def __init__(self, *args, **kwargs):
         super(Application, self).__init__(*args, **kwargs)
@@ -31,7 +30,8 @@ class Application(tk.Frame, object):
        # label = tk.Label(self, text="Search company name ")
         #label.pack()
         #label.grid(row=1, column=1, rowspan=1, columnspan=2, padx=3, pady=3)
-
+        self.dataPlot = None
+        self.lf = None
         self.entry = AutocompleteEntry(self)
         self.build(case_sensitive=False, no_results_message=NO_RESULTS_MESSAGE)
         self.entry.grid(row=2, column=2, rowspan=1, columnspan=2, padx=10, pady=3)
@@ -58,59 +58,72 @@ class Application(tk.Frame, object):
         )
 
 
-def getGraphIncomeAnalysis():
-    company_name = root.children['!autocompleteentry'].selected_value
-    company_tiker = code_dic[company_name].lower()
-    print(company_tiker)
-    df = getIncomeAnalysis(company_tiker)
-    if(df is not None):
-        lf = ttk.Labelframe(root, text='Income Analysis')
-        lf.grid(row=3, column=3, columnspan=10, sticky='s', padx=3, pady=3)
-        f = Figure(figsize=(10, 6), dpi=100)
-        ax = f.add_subplot(111)
+    def getGraphIncomeAnalysis(self):
+        self.clearCanvas()
+        company_name = root.children['!autocompleteentry'].selected_value
+        company_tiker = code_dic[company_name].lower()
+        df = getIncomeAnalysis(company_tiker)
+        if(df is not None):
+            self.lf = ttk.Labelframe(root, text='Income Analysis')
+            self.lf.grid(row=3, column=3, columnspan=10, sticky='s', padx=3, pady=3)
+            f = Figure(figsize=(10, 6), dpi=100)
+            ax = f.add_subplot(111)
+            df.plot(kind='line', x='Year', y=['NetIncome', 'TotalRevenue', 'GrossProfit', 'EBIT'],ax=ax)
+            self.dataPlot = FigureCanvasTkAgg(f, master=self.lf)
+            self.dataPlot.draw()
+            self.dataPlot.get_tk_widget().grid(row=3, column=3, columnspan=10)
 
-        df.plot(kind='line', x='Year', y=['NetIncome', 'TotalRevenue', 'GrossProfit', 'EBIT'],ax=ax)
-        dataPlot = FigureCanvasTkAgg(f, master=lf)
-        dataPlot.draw()
-        dataPlot.get_tk_widget().grid(row=3, column=3, columnspan=10,)
+        else:
+            tk.messagebox.showinfo(title='Information', message='Service Not Available')
 
-    else:
-        tk.messagebox.showinfo(title='Information', message='Service Not Available')
+    def getGraphExpenseAnalysis(self):
+        self.clearCanvas()
+        company_name = root.children['!autocompleteentry'].selected_value
+        company_tiker = code_dic[company_name]
+        df = getExpenseAnalysis(company_tiker)
+        if (df is not None):
+            self.lf = ttk.Labelframe(root, text='Expense Analysis')
+            self.lf.grid(row=3, column=3, columnspan=10, sticky='s', padx=3, pady=3)
 
-def getGraphExpenseAnalysis():
-    company_name = root.children['!autocompleteentry'].selected_value
-    company_tiker = code_dic[company_name]
-    df = getExpenseAnalysis(company_tiker)
-    if (df is not None):
-        lf = ttk.Labelframe(root, text='Expense Analysis')
-        lf.grid(row=3, column=3, columnspan=10, sticky='s', padx=3, pady=3)
-        f = Figure(figsize=(10, 6), dpi=100)
-        ax = f.add_subplot(111)
-        df.plot.pie(subplots=True, autopct='%.2f', labeldistance=True, legend=False, figsize=(5, 5),ax=ax)
-        dataPlot = FigureCanvasTkAgg(f, master=lf)
-        dataPlot.draw()
-        dataPlot.get_tk_widget().grid(row=3, column=3, columnspan=10)
+            fig, axes = plt.subplots(nrows=2, ncols=2)
+            for ax, col in zip(axes.flat, df.columns):
+                ax.pie(df[col], labels=df.index, autopct='%.2f')
+                ax.set(title=col, aspect='equal')
+            axes[0, 0].legend(bbox_to_anchor=(0, 0.5))
+            self.dataPlot = FigureCanvasTkAgg(fig, master= self.lf)
+            self.dataPlot.get_tk_widget().grid(row=3, column=3, columnspan=10)
+            self.dataPlot.draw()
 
-    else:
-        tk.messagebox.showinfo(title='Information', message='Service Not Available')
-def getGraphLiabilityAnalysis():
-    company_name = root.children['!autocompleteentry'].selected_value
-    company_tiker = code_dic[company_name]
-    df = getLiabilityAnalysis(company_tiker)
-    if (df is not None):
-        lf = ttk.Labelframe(root, text='Liability Analysis')
-        lf.grid(row=3, column=3, columnspan=10,sticky='s', padx=3, pady=3)
-        f = Figure(figsize=(10, 6), dpi=100)
-        ax = f.add_subplot(111)
-        df.plot(kind='bar', x='Year',
-                         y=['LongTermDebt', 'CurrentDebt', 'CurrentDeferredRevenue', 'DeferredIncomeTax',
-                            'AccountsPayable'],ax=ax)
-        dataPlot = FigureCanvasTkAgg(f, master=lf)
-        dataPlot.draw()
-        dataPlot.get_tk_widget().grid(row=3, column=3, columnspan=10)
-        plt.show()
-    else:
-        tk.messagebox.showinfo(title='Information', message='Service Not Available')
+
+        else:
+            tk.messagebox.showinfo(title='Information', message='Service Not Available')
+
+    def getGraphLiabilityAnalysis(self):
+        self.clearCanvas()
+        company_name = root.children['!autocompleteentry'].selected_value
+        company_tiker = code_dic[company_name]
+        df = getLiabilityAnalysis(company_tiker)
+        if (df is not None):
+            self.lf = ttk.Labelframe(root, text='Liability Analysis')
+            self.lf.grid(row=3, column=3, columnspan=10,sticky='s', padx=3, pady=3)
+            f = Figure(figsize=(10, 6), dpi=100)
+            ax = f.add_subplot(111)
+            df.plot(kind='bar', x='Year',
+                             y=['LongTermDebt', 'CurrentDebt', 'CurrentDeferredRevenue', 'DeferredIncomeTax',
+                                'AccountsPayable'],ax=ax)
+            self.dataPlot = FigureCanvasTkAgg(f, master=self.lf)
+            self.dataPlot.draw()
+            self.dataPlot.get_tk_widget().grid(row=3, column=3, columnspan=10)
+            self.dataPlot.get_tk_widget().grid(row=3, column=3, columnspan=10)
+        else:
+            tk.messagebox.showinfo(title='Information', message='Service Not Available')
+
+    def clearCanvas(self):
+        if(self.dataPlot is not None):
+            self.dataPlot.get_tk_widget().destroy()
+            self.lf.destroy()
+            self.dataPlot = None
+        print("Plot Page has been cleared")
 
 if __name__ == "__main__":
     root = tk.Tk()
@@ -122,11 +135,11 @@ if __name__ == "__main__":
     application.grid(row=1, column=1, columnspan=1)
    # application.pack()
 
-    b1 = tk.Button(root, text='Income Analysis', width=15, height=2, command=getGraphIncomeAnalysis)
+    b1 = tk.Button(root, text='Income Analysis', width=15, height=2, command=application.getGraphIncomeAnalysis)
     b1.grid(row=1, column =5, rowspan=2, sticky = 'nw', pady=5,padx = 5)
-    b2 = tk.Button(root, text='Expense Analysis', width=15, height=2, command=getGraphExpenseAnalysis)
+    b2 = tk.Button(root, text='Expense Analysis', width=15, height=2, command=application.getGraphExpenseAnalysis)
     b2.grid(row=1, column= 6, rowspan=2, sticky = 'nw',pady=5, padx = 5)
-    b3 = tk.Button(root, text='Liability Analysis', width=15, height=2, command=getGraphLiabilityAnalysis)
+    b3 = tk.Button(root, text='Liability Analysis', width=15, height=2, command=application.getGraphLiabilityAnalysis)
     b3.grid(row=1, column= 7, rowspan=2, sticky = 'nw',pady=5, padx = 5)
 
     root.mainloop()
