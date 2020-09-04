@@ -117,7 +117,6 @@ class Application(tk.Frame, object):
             self.dataPlot.get_tk_widget().destroy()
             self.lf.destroy()
             self.dataPlot = None
-        print("Plot Page has been cleared")
 
 if __name__ == "__main__":
     root = tk.Tk()
