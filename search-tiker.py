@@ -1,4 +1,3 @@
-
 import tkinter as tk
 import tkinter.ttk as ttk
 from autocompletebox import AutocompleteEntry
@@ -29,7 +28,6 @@ class Application(tk.Frame, object):
         self.entry = AutocompleteEntry(self)
         self.build(case_sensitive=False, no_results_message=NO_RESULTS_MESSAGE)
         self.entry.grid(row=2, column=2, rowspan=1, columnspan=2, padx=10, pady=3)
-        #self.entry.pack(after=label)
         self.nr = tk.StringVar()
 
 
@@ -51,13 +49,18 @@ class Application(tk.Frame, object):
 
         )
 
-
     def getGraphIncomeAnalysis(self):
         self.clearCanvas()
         company_name = root.children['!autocompleteentry'].selected_value
         company_tiker = code_dic[company_name].lower()
-        df = getIncomeAnalysis(company_tiker)
-        if(df is not None):
+        dataAvailable = True
+        try:
+            df = getIncomeAnalysis(company_tiker)
+        except:
+            tk.messagebox.showinfo(title='Information', message='Data partially not available')
+            dataAvailable = False
+
+        if(df is not None and dataAvailable):
             self.lf = ttk.Labelframe(root, text='Income Analysis')
             self.lf.grid(row=3, column=3, columnspan=10, sticky='s', padx=3, pady=3)
             f = Figure(figsize=(10, 6), dpi=100)
@@ -74,8 +77,13 @@ class Application(tk.Frame, object):
         self.clearCanvas()
         company_name = root.children['!autocompleteentry'].selected_value
         company_tiker = code_dic[company_name]
-        df = getExpenseAnalysis(company_tiker)
-        if (df is not None):
+        dataAvailable = True
+        try:
+            df = getExpenseAnalysis(company_tiker)
+        except:
+            tk.messagebox.showinfo(title='Information', message='Data partially not available')
+            dataAvailable = False
+        if (df is not None and dataAvailable):
             self.lf = ttk.Labelframe(root, text='Expense Analysis')
             self.lf.grid(row=3, column=3, columnspan=10, sticky='s', padx=3, pady=3)
 
@@ -96,15 +104,18 @@ class Application(tk.Frame, object):
         self.clearCanvas()
         company_name = root.children['!autocompleteentry'].selected_value
         company_tiker = code_dic[company_name]
-        df = getLiabilityAnalysis(company_tiker)
-        if (df is not None):
+        dataAvailable = True
+        try:
+            df = getLiabilityAnalysis(company_tiker)
+        except:
+            tk.messagebox.showinfo(title='Information', message='Data partially not available')
+            dataAvailable = False
+        if (df is not None and dataAvailable):
             self.lf = ttk.Labelframe(root, text='Liability Analysis')
             self.lf.grid(row=3, column=3, columnspan=10,sticky='s', padx=3, pady=3)
             f = Figure(figsize=(10, 6), dpi=100)
             ax = f.add_subplot(111)
-            df.plot(kind='bar', x='Year',
-                             y=['LongTermDebt', 'CurrentDebt', 'CurrentDeferredRevenue', 'DeferredIncomeTax',
-                                'AccountsPayable'],ax=ax)
+            df.plot(kind='bar', x='Year',ax=ax)
             self.dataPlot = FigureCanvasTkAgg(f, master=self.lf)
             self.dataPlot.draw()
             self.dataPlot.get_tk_widget().grid(row=3, column=3, columnspan=10)
@@ -121,7 +132,7 @@ class Application(tk.Frame, object):
 if __name__ == "__main__":
     root = tk.Tk()
     root.geometry("1000x500")
-    root.title("Equity Performance Visualizer")
+    root.title("Company Performance Visualizer")
     root.tk_setPalette("white")
 
     application = Application(root)

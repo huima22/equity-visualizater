@@ -3,10 +3,13 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import pandas_datareader.data as data
 def getFinancialData(ticker,types):
-	data = Ticker(ticker).get_financial_data(types, trailing=False)
-	if data is not None:
-		return data
-	else:
+	try:
+		data = Ticker(ticker).get_financial_data(types, trailing=False)
+		if data is not None:
+			return data
+		else:
+			return None
+	except:
 		return None
 
 def getIncomeAnalysis(ticker):
@@ -19,7 +22,6 @@ def getIncomeAnalysis(ticker):
 		return df
 	else:
 		return None
-	#df.plot(kind='line', x='asOfDate', y=['NetIncome', 'TotalRevenue', 'GrossProfit', 'EBIT'])
 
 
 def getExpenseAnalysis(ticker):
@@ -30,31 +32,23 @@ def getExpenseAnalysis(ticker):
 	df1 = pd.merge(dfSGA, dfRandD, on=['asOfDate'])
 	df2 = pd.merge(dfCOGS, dfOtherOperating, on='asOfDate')
 	expenseData = pd.merge(df1, df2, on=['asOfDate'])
-	#start_date, end_date = '2016-01-01', '2016-12-31'
 	expenseData['Year'] = pd.DatetimeIndex(expenseData['asOfDate']).year
 	expenseData = expenseData.drop(['asOfDate'],axis=1)
 	expenseData.set_index('Year', inplace=True)
 	dfTranspose = expenseData.transpose()
-	#print(dfTranspose)
 	return dfTranspose
-	#df2015.plot.pie(y=['SellingGeneralAndAdministration','ResearchAndDevelopment','CostOfRevenue','InterestExpense','OperatingExpense'])
-	#dfTranspose.plot.pie(subplots=True,autopct='%.2f',labeldistance=True, legend=False,figsize=(5, 5))
 
 
 def getLiabilityAnalysis(ticker):
 	dfLiability = getFinancialData(ticker, ['LongTermDebt','CurrentDebt','CurrentDeferredRevenue','DeferredIncomeTax','AccountsPayable']).drop(['periodType'], axis=1)
 	dfLiability['Year'] = pd.DatetimeIndex(dfLiability['asOfDate']).year
 	dfLiability = dfLiability.drop(['asOfDate'], axis=1)
-	#dfLiability.plot(kind='bar', x='Year', y=['LongTermDebt', 'CurrentDebt', 'CurrentDeferredRevenue', 'DeferredIncomeTax','AccountsPayable'])
 	return dfLiability
-#def getAssetAnalysis(ticker):
-#def getRatioAnalysis(ticker):
 
 def main():
 	getIncomeAnalysis('aapl')
 	getExpenseAnalysis('aapl')
 	getLiabilityAnalysis('aapl')
-
 	plt.show()
 
 if __name__== "__main__":
