@@ -1,8 +1,11 @@
 from yahooquery import Ticker
 import matplotlib.pyplot as plt
 import pandas as pd
-import pandas_datareader.data as data
+
 def getFinancialData(ticker,types):
+	"""
+	Method to read yahoo finance data from API
+	"""
 	try:
 		data = Ticker(ticker).get_financial_data(types, trailing=False)
 		if data is not None:
@@ -13,6 +16,9 @@ def getFinancialData(ticker,types):
 		return None
 
 def getIncomeAnalysis(ticker):
+	"""
+	Method to construct data for income analysis
+	"""
 	dfGrossProfitEbit = getFinancialData(ticker, ['GrossProfit', 'EBIT'])
 	dfNetIncomeRevenue = getFinancialData(ticker, ['TotalRevenue', 'NetIncome'])
 	if dfGrossProfitEbit is not None and dfNetIncomeRevenue is not None:
@@ -25,6 +31,9 @@ def getIncomeAnalysis(ticker):
 
 
 def getExpenseAnalysis(ticker):
+	"""
+	Method to construct data for expense analysis
+	"""
 	dfSGA = getFinancialData(ticker,['SellingGeneralAndAdministration']).drop(['periodType'],axis=1).rename(columns={'SellingGeneralAndAdministration' : 'SG&A'})
 	dfRandD = getFinancialData(ticker,['ResearchAndDevelopment']).drop(['periodType'],axis=1).rename(columns={'ResearchAndDevelopment' : 'R&D'})
 	dfCOGS = getFinancialData(ticker,['CostOfRevenue','InterestExpense']).drop(['periodType'],axis=1).rename(columns={'CostOfRevenue' : 'COGS', 'InterestExpense':'Interest'})
@@ -40,17 +49,13 @@ def getExpenseAnalysis(ticker):
 
 
 def getLiabilityAnalysis(ticker):
+	"""
+	Method to construct data for liability analysis
+	"""
 	dfLiability = getFinancialData(ticker, ['LongTermDebt','CurrentDebt','CurrentDeferredRevenue','DeferredIncomeTax','AccountsPayable']).drop(['periodType'], axis=1)
 	dfLiability['Year'] = pd.DatetimeIndex(dfLiability['asOfDate']).year
 	dfLiability = dfLiability.drop(['asOfDate'], axis=1)
 	return dfLiability
 
-def main():
-	getIncomeAnalysis('aapl')
-	getExpenseAnalysis('aapl')
-	getLiabilityAnalysis('aapl')
-	plt.show()
 
-if __name__== "__main__":
-  main()
 

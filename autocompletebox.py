@@ -13,10 +13,6 @@ NO_RESULTS_MESSAGE = "No results found for '{}'"
 
 class AutocompleteEntry(tk.Frame, object):
     """A container for `tk.Entry` and `tk.Listbox` widgets.
-    An instance of AutocompleteEntry is actually a `tk.Frame`,
-    containing the `tk.Entry` and `tk.Listbox` widgets needed
-    to display autocompletion entries. Thus, you can initialize
-    it with the usual arguments to `tk.Frame`.
     Constants:
     LISTBOX_HEIGHT -- Default height for the `tk.Listbox` widget
     LISTBOX_WIDTH -- Default width for the `tk.Listbox` widget
@@ -139,8 +135,6 @@ class AutocompleteEntry(tk.Frame, object):
                         )
                     )
                 if listbox_size <= self.listbox["height"]:
-                    # In case there's less entries than the maximum
-                    # amount of entries allowed, resize the listbox.
                     self.listbox["height"] = listbox_size
                 self.listbox.grid()
         else:

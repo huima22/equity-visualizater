@@ -10,6 +10,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
+
 matplotlib.use("TkAgg")
 
 all_ticker = data.get_nasdaq_symbols(retry_count=3, timeout=30, pause=None)
@@ -21,6 +22,15 @@ all_ticker = all_ticker.set_index('Security Name')
 code_dic = all_ticker.to_dict()
 code_dic = code_dic.get('Symbol')
 class Application(tk.Frame, object):
+    """Main Class of the application
+       Methods:
+       __init__ -- Set up the UI
+       build -- pass company data to autocompletebox UI component
+       _update -- on update pass input data to build
+       getGraphIncomeAnalysis -- Plot graph for income analysis
+       getGraphExpenseAnalysis -- Plot graph for expense analysis
+       getGraphLiabilityAnalysis --Plot graph for liability analysis
+       """
     def __init__(self, *args, **kwargs):
         super(Application, self).__init__(*args, **kwargs)
         self.dataPlot = None
@@ -67,8 +77,8 @@ class Application(tk.Frame, object):
             ax = f.add_subplot(111)
             df.plot(kind='line', x='Year', y=['NetIncome', 'TotalRevenue', 'GrossProfit', 'EBIT'],ax=ax)
             self.dataPlot = FigureCanvasTkAgg(f, master=self.lf)
-            self.dataPlot.draw()
             self.dataPlot.get_tk_widget().grid(row=3, column=3, columnspan=10)
+            self.dataPlot.draw()
 
         else:
             tk.messagebox.showinfo(title='Information', message='Service Not Available')
@@ -131,7 +141,7 @@ class Application(tk.Frame, object):
 
 if __name__ == "__main__":
     root = tk.Tk()
-    root.geometry("1000x500")
+    root.geometry("900x500")
     root.title("Company Performance Visualizer")
     root.tk_setPalette("white")
 
